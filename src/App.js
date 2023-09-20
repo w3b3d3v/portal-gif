@@ -3,24 +3,27 @@ import twitterLogo from "./assets/twitter-logo.svg"
 import "./App.css"
 import idl from './idl.json'
 import { Connection, PublicKey, clusterApiUrl } from '@solana/web3.js'
-import { Program, Provider, web3 } from '@project-serum/anchor'
-import kp from './keypair.json'
+import { Program, AnchorProvider, web3 } from "@project-serum/anchor"
+import kp from "./keypair.json"
 
 const { SystemProgram } = web3
 
 const arr = Object.values(kp._keypair.secretKey)
 const secret = new Uint8Array(arr)
 const baseAccount = web3.Keypair.fromSecretKey(secret)
+// let baseAccount = web3.Keypair.generate()
+
+console.log(baseAccount.publicKey.toString())
 
 // Get our program's id from the IDL file.
 const programID = new PublicKey(idl.metadata.address)
 
 // Set our network to devnet.
-const network = clusterApiUrl('devnet')
+const network = clusterApiUrl("devnet")
 
 // Controls how we want to acknowledge when a transaction is "done".
 const opts = {
-  preflightCommitment: "processed"
+  preflightCommitment: "processed",
 }
 // Constants
 const TWITTER_HANDLE = "web3dev_"
@@ -45,10 +48,7 @@ const App = () => {
           console.log("Phantom wallet encontrada!")
 
           const response = await solana.connect({ onlyIfTrusted: true })
-          console.log(
-            "Conectado com a Chave Pública:",
-            response.publicKey.toString()
-          )
+          console.log("Conectado com a Chave Pública:", response.publicKey.toString())
           setWalletAddress(response.publicKey.toString())
         }
       } else {
@@ -63,10 +63,7 @@ const App = () => {
 
     if (solana) {
       const response = await solana.connect()
-      console.log(
-        "Conectado com a Chave Pública:",
-        response.publicKey.toString()
-      )
+      console.log("Conectado com a Chave Pública:", response.publicKey.toString())
       setWalletAddress(response.publicKey.toString())
     }
   }
@@ -75,10 +72,7 @@ const App = () => {
    * sua carteira ainda.
    */
   const renderNotConnectedContainer = () => (
-    <button
-      className="cta-button connect-wallet-button"
-      onClick={connectWallet}
-    >
+    <button className="cta-button connect-wallet-button" onClick={connectWallet}>
       Conecte sua carteira
     </button>
   )
@@ -99,11 +93,13 @@ const App = () => {
           user: provider.wallet.publicKey,
           systemProgram: SystemProgram.programId,
         },
-        signers: [baseAccount]
+        signers: [baseAccount],
       })
-      console.log("BaseAccount criado com sucesso com o endereço :", baseAccount.publicKey.toString())
+      console.log(
+        "BaseAccount criado com sucesso com o endereço :",
+        baseAccount.publicKey.toString()
+      )
       await getGifList()
-
     } catch (error) {
       console.log("Erro em criar BaseAccount", error)
     }
@@ -111,9 +107,7 @@ const App = () => {
 
   const getProvider = () => {
     const connection = new Connection(network, opts.preflightCommitment)
-    const provider = new Provider(
-      connection, window.solana, opts.preflightCommitment,
-    )
+    const provider = new AnchorProvider(connection, window.solana, opts.preflightCommitment)
     return provider
   }
 
@@ -122,8 +116,8 @@ const App = () => {
       console.log("No gif link given!")
       return
     }
-    setInputValue('')
-    console.log('Gif link:', inputValue)
+    setInputValue("")
+    console.log("Gif link:", inputValue)
     try {
       const provider = getProvider()
       const program = new Program(idl, programID, provider)
@@ -140,7 +134,7 @@ const App = () => {
     } catch (error) {
       console.log("Erro enviando GIF:", error)
     }
-  };
+  }
 
   const renderConnectedContainer = () => {
     // If we hit this, it means the program account hasn't been initialized.
@@ -194,7 +188,6 @@ const App = () => {
 
       console.log("Conta obtida", account)
       setGifList(account.gifList)
-
     } catch (error) {
       console.log("Erro em getGifList: ", error)
       setGifList(null)
@@ -203,10 +196,10 @@ const App = () => {
 
   useEffect(() => {
     if (walletAddress) {
-      console.log('Fetching em lista de Gifs...')
+      console.log("Fetching em lista de Gifs...")
       getGifList()
     }
-  }, [walletAddress]);
+  }, [walletAddress])
 
   useEffect(() => {
     const onLoad = async () => {
@@ -225,7 +218,7 @@ const App = () => {
       // Define o estado
       setGifList(TEST_GIFS)
     }
-  }, [walletAddress]);
+  }, [walletAddress])
   return (
     <div className="App">
       <div className={walletAddress ? "authed-container" : "container"}>

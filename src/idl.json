@@ -3,6 +3,11 @@
   "name": "myepicproject",
   "instructions": [
     {
+      "name": "initialize",
+      "accounts": [],
+      "args": []
+    },
+    {
       "name": "startStuffOff",
       "accounts": [
         {
@@ -86,6 +91,6 @@
     }
   ],
   "metadata": {
-    "address": "41jR3GpPHK5xaoBMkQgKtfpRgXmrRfYmdUnz9saLZi19"
+    "address": "8cKzdzukM7x2wW3awaokyco8SMyPHuz9mP3YoANNyJGi"
   }
 }
